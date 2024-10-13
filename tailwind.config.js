@@ -64,6 +64,10 @@ export default {
                     900: '#1A191A',
                     950: '#0C0B0C',
                 },
+                form: {
+                    light: '#F0EFF0',
+                    dark: '#1A191A',
+                },
             },
         },
     },
