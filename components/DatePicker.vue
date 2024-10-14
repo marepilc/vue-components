@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, nextTick } from 'vue'
-
 const props = defineProps({
     format: {
         type: String,
@@ -92,8 +90,37 @@ function toggleSelector() {
 function positionPicker() {
     if (pickerRef.value && buttonRef.value) {
         const buttonRect = buttonRef.value.getBoundingClientRect()
-        pickerRef.value.style.top = `${buttonRect.bottom + window.scrollY + 4}px` // Add some space below the button
-        pickerRef.value.style.left = `${buttonRect.left + window.scrollX}px`
+        const pickerEl = pickerRef.value
+
+        const pickerHeight = pickerEl.offsetHeight
+        const pickerWidth = pickerEl.offsetWidth
+
+        const viewportHeight = window.innerHeight
+        const viewportWidth = window.innerWidth
+
+        // Calculate positions
+        let top = buttonRect.bottom + window.scrollY + 4
+        let left =
+            buttonRect.left +
+            window.scrollX +
+            buttonRect.width / 2 -
+            pickerWidth / 2
+
+        // Adjust positioning if not enough space
+        if (left < 0) {
+            left = 4 // Add some padding from the left edge
+        } else if (left + pickerWidth > viewportWidth) {
+            left = viewportWidth - pickerWidth - 4 // Add some padding from the right edge
+        }
+
+        if (top + pickerHeight > viewportHeight) {
+            // Not enough space below, position above the button
+            top = buttonRect.top + window.scrollY - pickerHeight - 4
+        }
+
+        // Apply positioning styles
+        pickerEl.style.top = `${top}px`
+        pickerEl.style.left = `${left}px`
     }
 }
 
@@ -221,7 +248,7 @@ onBeforeUnmount(() => {
         <div
             v-if="pickerOpen"
             ref="pickerRef"
-            class="bg-form-light dark:bg-form-dark min-w-60 scale-95 transform rounded-md border border-surface-300 opacity-0 shadow-md transition-all duration-300 ease-out dark:border-surface-800"
+            class="min-w-60 scale-95 transform rounded-md border border-surface-300 bg-form-light opacity-0 shadow-md transition-all duration-300 ease-out dark:border-surface-800 dark:bg-form-dark"
             :class="pickerOpen ? 'scale-100 opacity-100' : ''"
             style="position: absolute; z-index: 10"
         >
@@ -355,7 +382,7 @@ onBeforeUnmount(() => {
             type="button"
             ref="buttonRef"
             @click="toggleSelector"
-            class="bg-form-light dark:bg-form-dark mt-4 cursor-default rounded border border-surface-300 px-3 py-1.5 text-center focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-surface-50 dark:border-surface-800 dark:focus:ring-offset-surface-950"
+            class="mt-4 cursor-default rounded border border-surface-300 bg-form-light px-3 py-1.5 text-center focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-surface-50 dark:border-surface-800 dark:bg-form-dark dark:focus:ring-offset-surface-950"
         >
             {{ formatDate(selectedDate, props.format) }}
         </button>

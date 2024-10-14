@@ -27,8 +27,85 @@ function toggleTheme() {
         <h1 class="py-6 text-3xl font-bold text-ink-950 dark:text-ink-50">
             Vue Component Library
         </h1>
-        <DatePicker />
         sdfjkl sdklf kldskl
+        <DatePicker />
+
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        sdfjkl sdklf kldskl
+        <br />
+        <br />
+        <br />
+        <br />
         <DatePicker />
     </main>
 </template>
