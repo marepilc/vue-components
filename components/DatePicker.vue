@@ -1,10 +1,26 @@
 <script setup lang="ts">
+import {
+    ref,
+    computed,
+    watch,
+    nextTick,
+    onBeforeUnmount,
+    defineProps,
+    defineEmits,
+} from 'vue'
+
 const props = defineProps({
+    modelValue: {
+        type: Date,
+        default: () => new Date(), // Use Date object instead of a string
+    },
     format: {
         type: String,
         default: 'YYYY-MM-DD',
     },
 })
+
+const emits = defineEmits(['update:modelValue'])
 
 const pickerOpen = ref(false)
 const pickerRef = ref<HTMLElement | null>(null)
@@ -41,7 +57,12 @@ const monthAbbreviations = [
     'Dec',
 ]
 
-const selectedDate = ref(new Date())
+const selectedDate = ref(new Date(props.modelValue))
+
+// Emit updated model value as a Date object
+watch(selectedDate, (newValue) => {
+    emits('update:modelValue', newValue)
+})
 
 // Compute an array of days in the selected month/year
 const daysInMonth = computed(() => {
@@ -83,8 +104,6 @@ function toggleSelector() {
             positionPicker()
         })
     }
-
-    console.log(formatDate(selectedDate.value, props.format))
 }
 
 function positionPicker() {
@@ -229,16 +248,41 @@ function handleClickOutside(event: MouseEvent) {
     }
 }
 
+function handleKeyDown(event: KeyboardEvent) {
+    console.log(event.key)
+    console.log(pickerOpen.value)
+    if (pickerOpen.value) {
+        if (event.key === 'Escape') {
+            pickerOpen.value = false
+        } else if (event.key === 'ArrowLeft') {
+            offsetDate(-1)
+        } else if (event.key === 'ArrowRight') {
+            offsetDate(1)
+        } else if (event.key === 'ArrowUp') {
+            // offsetDate(-12)
+        } else if (event.key === 'ArrowDown') {
+            // offsetDate(12)
+        }
+    } else {
+        if (event.key === 'Enter' || event.key === 'ArrowDown') {
+            toggleSelector()
+        }
+    }
+}
+
 watch(pickerOpen, (isOpen) => {
     if (isOpen) {
         document.addEventListener('click', handleClickOutside)
+        document.addEventListener('keydown', handleKeyDown)
     } else {
         document.removeEventListener('click', handleClickOutside)
+        document.removeEventListener('keydown', handleKeyDown)
     }
 })
 
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside)
+    document.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 

@@ -4,6 +4,8 @@ const colorMode = useColorMode()
 function toggleTheme() {
     colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'
 }
+
+const ddd = ref(new Date())
 </script>
 
 <template>
@@ -27,85 +29,10 @@ function toggleTheme() {
         <h1 class="py-6 text-3xl font-bold text-ink-950 dark:text-ink-50">
             Vue Component Library
         </h1>
-        sdfjkl sdklf kldskl
-        <DatePicker />
+        <DatePicker v-model="ddd" />
 
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        sdfjkl sdklf kldskl
-        <br />
-        <br />
-        <br />
-        <br />
+        {{ ddd.toISOString().slice(0, 19) }}
+
         <DatePicker />
     </main>
 </template>
