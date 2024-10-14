@@ -1,0 +1,27 @@
+<script setup lang="ts">
+definePageMeta({
+    layout: 'documentation',
+})
+</script>
+
+<template>
+    <h1>Button</h1>
+    <Button>
+        <template v-slot:icon>
+            <svg
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    fill="currentColor"
+                    d="M4.325 9h15.35l-.85-3H5.2zM16.8 11H7.225l-.275 2h10.1zM4.15 18.875L5.225 11H3q-.5 0-.787-.4t-.163-.875l1.425-5q.1-.325.35-.525t.6-.2h15.15q.35 0 .6.2t.35.525l1.425 5q.125.475-.162.875T21 11h-2.2l1.05 7.875q.05.45-.238.788t-.737.337q-.375 0-.663-.238t-.337-.612l-.55-4.15H6.675l-.55 4.15q-.05.375-.337.613T5.125 20q-.45 0-.737-.337t-.238-.788"
+                />
+            </svg>
+        </template>
+        I'm a button
+    </Button>
+    <Button class="mt-3" disabled>I'm disabled</Button>
+</template>
+
+<style scoped></style>

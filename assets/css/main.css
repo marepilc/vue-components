@@ -43,6 +43,8 @@
     html {
         @apply font-humanist bg-surface-50 text-ink-950 dark:bg-surface-900 dark:text-ink-50;
     }
+
+
 }
 
 @layer components {
@@ -66,7 +68,8 @@
     }
 
     .scrollbar-custom::-webkit-scrollbar-track {
-        background: #d6d3d1; /* Track color */
+        @apply bg-surface-200 dark:bg-surface-800;
+        /* Track color */
     }
 
     .scrollbar-custom::-webkit-scrollbar-thumb {
