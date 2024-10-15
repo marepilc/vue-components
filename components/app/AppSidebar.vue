@@ -9,6 +9,9 @@ const route = useRoute()
     <div :class="{ 'text-primary-500': route.name === 'docs-datetime-picker' }">
         <NuxtLink to="/docs/datetime-picker">DatetimePicker</NuxtLink>
     </div>
+    <div :class="{ 'text-primary-500': route.name === 'docs-switch' }">
+        <NuxtLink to="/docs/switch">Switch</NuxtLink>
+    </div>
     <div>-------</div>
     <div>-------</div>
     <div>-------</div>
