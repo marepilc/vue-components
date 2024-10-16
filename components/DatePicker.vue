@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import {
-    ref,
-    computed,
-    watch,
-    nextTick,
-    onBeforeUnmount,
-    defineProps,
-    defineEmits,
-} from 'vue'
-
 const props = defineProps({
     modelValue: {
         type: Date,
@@ -19,6 +9,8 @@ const props = defineProps({
         default: 'YYYY-MM-DD',
     },
 })
+
+const withTime = computed(() => props.format.includes('HH'))
 
 const emits = defineEmits(['update:modelValue'])
 
@@ -419,6 +411,7 @@ onBeforeUnmount(() => {
                         {{ year }}
                     </div>
                 </div>
+                <div v-if="withTime">Time</div>
             </div>
         </div>
 
