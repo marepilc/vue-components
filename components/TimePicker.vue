@@ -8,7 +8,7 @@ const props = defineProps({
     },
     hours24: {
         type: Boolean,
-        default: false,
+        default: true,
     },
 })
 
@@ -288,7 +288,6 @@ function emitModelValue() {
 
 <style scoped>
 input {
-    /* existing styles */
     @apply w-12 rounded border border-surface-300 bg-form-light px-2 py-1 text-center focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-surface-50 dark:border-surface-800 dark:bg-form-dark dark:focus:ring-offset-surface-950;
 }
 

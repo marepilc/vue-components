@@ -51,6 +51,8 @@ const monthAbbreviations = [
 
 const selectedDate = ref(new Date(props.modelValue))
 
+const selectedTime = ref('00:00')
+
 // Emit updated model value as a Date object
 watch(selectedDate, (newValue) => {
     emits('update:modelValue', newValue)
@@ -241,8 +243,6 @@ function handleClickOutside(event: MouseEvent) {
 }
 
 function handleKeyDown(event: KeyboardEvent) {
-    console.log(event.key)
-    console.log(pickerOpen.value)
     if (pickerOpen.value) {
         if (event.key === 'Escape') {
             pickerOpen.value = false
@@ -344,34 +344,41 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
                 <div
-                    class="grid grid-cols-7 gap-1 p-2"
+                    class="flex flex-col items-center"
                     v-if="pickerView === 'days'"
                 >
-                    <div
-                        v-for="(weekday, ix) in weekdays"
-                        :key="'weekday-' + ix"
-                        class="text-center font-bold"
-                    >
-                        {{ weekday }}
-                    </div>
+                    <div class="grid w-full grid-cols-7 gap-1 p-2">
+                        <div
+                            v-for="(weekday, ix) in weekdays"
+                            :key="'weekday-' + ix"
+                            class="text-center font-bold"
+                        >
+                            {{ weekday }}
+                        </div>
 
-                    <!-- Days Grid -->
-                    <div
-                        v-for="(day, ix) in daysInMonth"
-                        :key="'day-' + ix"
-                        class="cursor-default rounded p-1 text-center"
-                        :class="[
-                            day.currentMonth
-                                ? 'cursor-pointer text-ink-950 hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50'
-                                : 'text-ink-400 dark:text-ink-600',
-                            day.currentMonth && isSelectedDay(day)
-                                ? 'bg-primary-500 !text-ink-50'
-                                : '',
-                        ]"
-                        @click="day.currentMonth ? selectDate(day.day) : null"
-                    >
-                        {{ day.day }}
+                        <!-- Days Grid -->
+                        <div
+                            v-for="(day, ix) in daysInMonth"
+                            :key="'day-' + ix"
+                            class="cursor-default rounded p-1 text-center"
+                            :class="[
+                                day.currentMonth
+                                    ? 'cursor-pointer text-ink-950 hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50'
+                                    : 'text-ink-400 dark:text-ink-600',
+                                day.currentMonth && isSelectedDay(day)
+                                    ? 'bg-primary-500 !text-ink-50'
+                                    : '',
+                            ]"
+                            @click="
+                                day.currentMonth ? selectDate(day.day) : null
+                            "
+                        >
+                            {{ day.day }}
+                        </div>
                     </div>
+                    <template v-if="withTime">
+                        <TimePicker class="my-2" v-model="selectedTime" />
+                    </template>
                 </div>
                 <div
                     class="grid grid-cols-3 gap-1 p-2"
@@ -411,7 +418,6 @@ onBeforeUnmount(() => {
                         {{ year }}
                     </div>
                 </div>
-                <div v-if="withTime">Time</div>
             </div>
         </div>
 
