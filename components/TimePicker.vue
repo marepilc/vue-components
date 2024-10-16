@@ -223,7 +223,11 @@ function emitModelValue() {
                 maxlength="2"
             />
             <div class="flex flex-col justify-between">
-                <button @click="incrementHour" class="arrow-button">
+                <button
+                    @click="incrementHour"
+                    class="arrow-button"
+                    tabindex="-1"
+                >
                     <svg
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
@@ -233,7 +237,11 @@ function emitModelValue() {
                         <path d="m12 3.167 10.406 17.666H1.595L12 3.167Z" />
                     </svg>
                 </button>
-                <button @click="decrementHour" class="arrow-button">
+                <button
+                    @click="decrementHour"
+                    class="arrow-button"
+                    tabindex="-1"
+                >
                     <svg
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
@@ -256,7 +264,11 @@ function emitModelValue() {
                 maxlength="2"
             />
             <div class="flex flex-col justify-between">
-                <button @click="incrementMinute" class="arrow-button">
+                <button
+                    @click="incrementMinute"
+                    class="arrow-button"
+                    tabindex="-1"
+                >
                     <svg
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
@@ -266,7 +278,11 @@ function emitModelValue() {
                         <path d="m12 3.167 10.406 17.666H1.595L12 3.167Z" />
                     </svg>
                 </button>
-                <button @click="decrementMinute" class="arrow-button">
+                <button
+                    @click="decrementMinute"
+                    class="arrow-button"
+                    tabindex="-1"
+                >
                     <svg
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"

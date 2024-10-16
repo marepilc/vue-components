@@ -2,7 +2,7 @@
 const props = defineProps({
     modelValue: {
         type: Date,
-        default: () => new Date(), // Use Date object instead of a string
+        default: () => new Date(),
     },
     format: {
         type: String,
@@ -10,14 +10,16 @@ const props = defineProps({
     },
 })
 
-const withTime = computed(() => props.format.includes('HH'))
+const withTime = computed(
+    () => props.format.includes('HH') || props.format.includes('mm')
+)
 
 const emits = defineEmits(['update:modelValue'])
 
 const pickerOpen = ref(false)
 const pickerRef = ref<HTMLElement | null>(null)
 const buttonRef = ref<HTMLElement | null>(null)
-const pickerView = ref<'days' | 'months' | 'years'>('months')
+const pickerView = ref<'days' | 'months' | 'years'>('days')
 
 const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 const monthNames = [
@@ -50,12 +52,27 @@ const monthAbbreviations = [
 ]
 
 const selectedDate = ref(new Date(props.modelValue))
+if (!withTime.value) {
+    selectedDate.value.setHours(0, 0, 0, 0)
+    emits('update:modelValue', selectedDate.value)
+}
+const selectedTime = ref(formatDate(selectedDate.value, 'HH:mm'))
 
-const selectedTime = ref('00:00')
-
-// Emit updated model value as a Date object
+// Watch for changes in selectedDate and update selectedTime
 watch(selectedDate, (newValue) => {
+    selectedTime.value = formatDate(newValue, 'HH:mm')
     emits('update:modelValue', newValue)
+})
+
+// Watch for changes in selectedTime and update selectedDate
+watch(selectedTime, (newValue) => {
+    const [hours, minutes] = newValue.split(':').map(Number)
+    const date = new Date(selectedDate.value)
+    date.setHours(hours)
+    date.setMinutes(minutes)
+    date.setSeconds(0)
+    date.setMilliseconds(0)
+    selectedDate.value = date
 })
 
 // Compute an array of days in the selected month/year
@@ -68,20 +85,32 @@ const daysInMonth = computed(() => {
     const firstDayOfWeek = new Date(year, month, 1).getDay()
     const lastDayOfPreviousMonth = new Date(year, month, 0).getDate()
 
-    // Fill in the days from the previous month to align the first day of the current month
+    // Previous month's days
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-        days.push({ day: lastDayOfPreviousMonth - i, currentMonth: false })
+        const prevMonth = month - 1 < 0 ? 11 : month - 1
+        const prevYear = month - 1 < 0 ? year - 1 : year
+        days.push({
+            day: lastDayOfPreviousMonth - i,
+            month: prevMonth,
+            year: prevYear,
+            currentMonth: false,
+        })
     }
 
-    // Fill in the days of the current month
+    // Current month's days
     for (let i = 1; i <= lastDayOfCurrentMonth; i++) {
-        days.push({ day: i, currentMonth: true })
+        days.push({ day: i, month: month, year: year, currentMonth: true })
     }
 
-    // Fill in the days from the next month to complete the grid (if necessary)
+    // Next month's days
+    let nextMonth = month + 1 > 11 ? 0 : month + 1
+    let nextYear = month + 1 > 11 ? year + 1 : year
+    let dayCounter = 1
     while (days.length % 7 !== 0) {
         days.push({
-            day: days.length - lastDayOfCurrentMonth - firstDayOfWeek + 1,
+            day: dayCounter++,
+            month: nextMonth,
+            year: nextYear,
             currentMonth: false,
         })
     }
@@ -137,20 +166,20 @@ function positionPicker() {
     }
 }
 
-function selectDate(day: number) {
-    selectedDate.value = new Date(
-        selectedDate.value.getFullYear(),
-        selectedDate.value.getMonth(),
-        day
-    )
+function selectDate(day: { day: number; month: number; year: number }) {
+    selectedDate.value = new Date(day.year, day.month, day.day, 0, 0, 0, 0)
     pickerOpen.value = false
 }
 
-function isSelectedDay(day: { day: number }): boolean {
+function isSelectedDay(day: {
+    day: number
+    month: number
+    year: number
+}): boolean {
     return (
         selectedDate.value.getDate() === day.day &&
-        selectedDate.value.getMonth() === selectedDate.value.getMonth() &&
-        selectedDate.value.getFullYear() === selectedDate.value.getFullYear()
+        selectedDate.value.getMonth() === day.month &&
+        selectedDate.value.getFullYear() === day.year
     )
 }
 
@@ -189,10 +218,16 @@ function offsetDate(offset: number) {
     const newMonth = newDate.getMonth()
     const lastDayOfNewMonth = new Date(newYear, newMonth + 1, 0).getDate()
 
+    const newDay = Math.min(currentDay, lastDayOfNewMonth)
+
     selectedDate.value = new Date(
         newYear,
         newMonth,
-        Math.min(currentDay, lastDayOfNewMonth)
+        newDay,
+        selectedDate.value.getHours(),
+        selectedDate.value.getMinutes(),
+        0,
+        0
     )
 }
 
@@ -201,10 +236,16 @@ function changeDateMonth(newMonth: number) {
     const currentDay = selectedDate.value.getDate()
     const lastDayOfNewMonth = new Date(currentYear, newMonth + 1, 0).getDate()
 
+    const newDay = Math.min(currentDay, lastDayOfNewMonth)
+
     selectedDate.value = new Date(
         currentYear,
         newMonth,
-        Math.min(currentDay, lastDayOfNewMonth)
+        newDay,
+        selectedDate.value.getHours(),
+        selectedDate.value.getMinutes(),
+        0,
+        0
     )
     pickerView.value = 'days'
 }
@@ -220,10 +261,16 @@ function changeDateYear(newYear: number, closeYearView = true) {
     const currentDay = selectedDate.value.getDate()
     const lastDayOfNewMonth = new Date(newYear, currentMonth + 1, 0).getDate()
 
+    const newDay = Math.min(currentDay, lastDayOfNewMonth)
+
     selectedDate.value = new Date(
         newYear,
         currentMonth,
-        Math.min(currentDay, lastDayOfNewMonth)
+        newDay,
+        selectedDate.value.getHours(),
+        selectedDate.value.getMinutes(),
+        0,
+        0
     )
 
     if (closeYearView) {
@@ -250,10 +297,6 @@ function handleKeyDown(event: KeyboardEvent) {
             offsetDate(-1)
         } else if (event.key === 'ArrowRight') {
             offsetDate(1)
-        } else if (event.key === 'ArrowUp') {
-            // offsetDate(-12)
-        } else if (event.key === 'ArrowDown') {
-            // offsetDate(12)
         }
     } else {
         if (event.key === 'Enter' || event.key === 'ArrowDown') {
@@ -289,6 +332,7 @@ onBeforeUnmount(() => {
             style="position: absolute; z-index: 10"
         >
             <div class="flex flex-col">
+                <!-- Header with Month and Year -->
                 <div class="flex items-center justify-between">
                     <div
                         class="flex items-center justify-between gap-1 px-2 py-1 text-lg font-bold"
@@ -308,12 +352,14 @@ onBeforeUnmount(() => {
                             </span>
                         </div>
                     </div>
+                    <!-- Navigation Buttons -->
                     <div class="flex items-center justify-between px-2 py-1">
                         <button
                             class="p-1 hover:text-primary-500"
                             type="button"
                             @click="offsetDate(-1)"
                         >
+                            <!-- Left Arrow Icon -->
                             <svg
                                 class="h-5 w-5"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +367,7 @@ onBeforeUnmount(() => {
                             >
                                 <path
                                     fill="currentColor"
-                                    d="M16 19L5 12l11-7zm-2-3.65v-6.7L8.75 12z"
+                                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
                                 />
                             </svg>
                         </button>
@@ -330,6 +376,7 @@ onBeforeUnmount(() => {
                             type="button"
                             @click="offsetDate(1)"
                         >
+                            <!-- Right Arrow Icon -->
                             <svg
                                 class="h-5 w-5"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -337,16 +384,19 @@ onBeforeUnmount(() => {
                             >
                                 <path
                                     fill="currentColor"
-                                    d="M8 19V5l11 7zm2-3.65L15.25 12L10 8.65z"
+                                    d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"
                                 />
                             </svg>
                         </button>
                     </div>
                 </div>
+
+                <!-- Days View -->
                 <div
                     class="flex flex-col items-center"
                     v-if="pickerView === 'days'"
                 >
+                    <!-- Weekdays Header -->
                     <div class="grid w-full grid-cols-7 gap-1 p-2">
                         <div
                             v-for="(weekday, ix) in weekdays"
@@ -365,21 +415,29 @@ onBeforeUnmount(() => {
                                 day.currentMonth
                                     ? 'cursor-pointer text-ink-950 hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50'
                                     : 'text-ink-400 dark:text-ink-600',
-                                day.currentMonth && isSelectedDay(day)
+                                isSelectedDay(day)
                                     ? 'bg-primary-500 !text-ink-50'
                                     : '',
                             ]"
-                            @click="
-                                day.currentMonth ? selectDate(day.day) : null
-                            "
+                            @click="selectDate(day)"
                         >
                             {{ day.day }}
                         </div>
                     </div>
+                    <hr
+                        class="mx-2 w-full border-surface-100 dark:border-surface-800"
+                    />
+                    <!-- TimePicker Component -->
                     <template v-if="withTime">
-                        <TimePicker class="my-2" v-model="selectedTime" />
+                        <TimePicker
+                            class="my-2"
+                            v-model="selectedTime"
+                            :hours24="true"
+                        />
                     </template>
                 </div>
+
+                <!-- Months View -->
                 <div
                     class="grid grid-cols-3 gap-1 p-2"
                     v-if="pickerView === 'months'"
@@ -399,6 +457,8 @@ onBeforeUnmount(() => {
                         {{ monthAbbreviations[ix] }}
                     </div>
                 </div>
+
+                <!-- Years View -->
                 <div
                     class="grid grid-cols-3 gap-1 p-2"
                     v-if="pickerView === 'years'"
@@ -421,6 +481,7 @@ onBeforeUnmount(() => {
             </div>
         </div>
 
+        <!-- Date Picker Button -->
         <button
             type="button"
             ref="buttonRef"
