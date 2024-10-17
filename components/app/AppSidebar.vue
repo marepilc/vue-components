@@ -15,6 +15,9 @@ const route = useRoute()
     <div :class="{ 'text-primary-500': route.name === 'docs-switch' }">
         <NuxtLink to="/docs/switch">Switch</NuxtLink>
     </div>
+    <div :class="{ 'text-primary-500': route.name === 'docs-popover' }">
+        <NuxtLink to="/docs/popover">Popover</NuxtLink>
+    </div>
     <div>-------</div>
     <div>-------</div>
     <div>-------</div>
