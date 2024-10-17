@@ -4,6 +4,7 @@ definePageMeta({
 })
 
 const value = ref(true)
+const valueDate = ref(new Date())
 </script>
 
 <template>
@@ -23,6 +24,7 @@ const value = ref(true)
         <div class="p-4">
             <p>This is the content inside the popover.</p>
             <p>You can place any Vue components or HTML content here.</p>
+            <DatePicker v-model="valueDate" />
         </div>
     </Popover>
 </template>

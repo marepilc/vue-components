@@ -339,162 +339,166 @@ onBeforeUnmount(() => {
 <template>
     <div class="inline-flex cursor-default flex-col items-center">
         <!-- Date Picker Popover -->
-        <div
-            v-if="pickerOpen"
-            ref="pickerRef"
-            class="min-w-60 scale-95 transform rounded-md border border-surface-300 bg-form-light opacity-0 shadow-md transition-all duration-300 ease-out dark:border-surface-800 dark:bg-form-dark"
-            :class="pickerOpen ? 'scale-100 opacity-100' : ''"
-            style="position: absolute; z-index: 10"
-        >
-            <div class="flex flex-col">
-                <!-- Header with Month and Year -->
-                <div class="flex items-center justify-between">
+        <teleport to="body">
+            <div
+                v-if="pickerOpen"
+                ref="pickerRef"
+                class="min-w-60 scale-95 transform rounded-md border border-surface-300 bg-form-light opacity-0 shadow-md transition-all duration-300 ease-out dark:border-surface-800 dark:bg-form-dark"
+                :class="pickerOpen ? 'scale-100 opacity-100' : ''"
+                style="position: absolute; z-index: 10"
+            >
+                <div class="flex flex-col">
+                    <!-- Header with Month and Year -->
+                    <div class="flex items-center justify-between">
+                        <div
+                            class="flex items-center justify-between gap-1 px-2 py-1 text-lg font-bold"
+                        >
+                            <div class="flex gap-1">
+                                <span
+                                    class="cursor-pointer hover:text-primary-500"
+                                    @click="pickerView = 'months'"
+                                >
+                                    {{ formatDate(selectedDate, 'MMMM') }}
+                                </span>
+                                <span
+                                    class="cursor-pointer hover:text-primary-500"
+                                    @click="pickerView = 'years'"
+                                >
+                                    {{ formatDate(selectedDate, 'YYYY') }}
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Navigation Buttons -->
+                        <div
+                            class="flex items-center justify-between px-2 py-1"
+                        >
+                            <button
+                                class="p-1 hover:text-primary-500"
+                                type="button"
+                                @click="offsetDate(-1)"
+                            >
+                                <!-- Left Arrow Icon -->
+                                <svg
+                                    class="h-5 w-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                class="p-1 hover:text-primary-500"
+                                type="button"
+                                @click="offsetDate(1)"
+                            >
+                                <!-- Right Arrow Icon -->
+                                <svg
+                                    class="h-5 w-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Days View -->
                     <div
-                        class="flex items-center justify-between gap-1 px-2 py-1 text-lg font-bold"
+                        class="flex flex-col items-center"
+                        v-if="pickerView === 'days'"
                     >
-                        <div class="flex gap-1">
-                            <span
-                                class="cursor-pointer hover:text-primary-500"
-                                @click="pickerView = 'months'"
+                        <!-- Weekdays Header -->
+                        <div class="grid w-full grid-cols-7 gap-1 p-2">
+                            <div
+                                v-for="(weekday, ix) in weekdays"
+                                :key="'weekday-' + ix"
+                                class="text-center font-bold"
                             >
-                                {{ formatDate(selectedDate, 'MMMM') }}
-                            </span>
-                            <span
-                                class="cursor-pointer hover:text-primary-500"
-                                @click="pickerView = 'years'"
-                            >
-                                {{ formatDate(selectedDate, 'YYYY') }}
-                            </span>
-                        </div>
-                    </div>
-                    <!-- Navigation Buttons -->
-                    <div class="flex items-center justify-between px-2 py-1">
-                        <button
-                            class="p-1 hover:text-primary-500"
-                            type="button"
-                            @click="offsetDate(-1)"
-                        >
-                            <!-- Left Arrow Icon -->
-                            <svg
-                                class="h-5 w-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    fill="currentColor"
-                                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
-                                />
-                            </svg>
-                        </button>
-                        <button
-                            class="p-1 hover:text-primary-500"
-                            type="button"
-                            @click="offsetDate(1)"
-                        >
-                            <!-- Right Arrow Icon -->
-                            <svg
-                                class="h-5 w-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    fill="currentColor"
-                                    d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                                {{ weekday }}
+                            </div>
 
-                <!-- Days View -->
-                <div
-                    class="flex flex-col items-center"
-                    v-if="pickerView === 'days'"
-                >
-                    <!-- Weekdays Header -->
-                    <div class="grid w-full grid-cols-7 gap-1 p-2">
-                        <div
-                            v-for="(weekday, ix) in weekdays"
-                            :key="'weekday-' + ix"
-                            class="text-center font-bold"
-                        >
-                            {{ weekday }}
+                            <!-- Days Grid -->
+                            <div
+                                v-for="(day, ix) in daysInMonth"
+                                :key="'day-' + ix"
+                                class="cursor-default rounded p-1 text-center"
+                                :class="[
+                                    day.currentMonth
+                                        ? 'cursor-pointer text-ink-950 hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50'
+                                        : 'text-ink-400 dark:text-ink-600',
+                                    isSelectedDay(day)
+                                        ? 'bg-primary-500 !text-ink-50'
+                                        : '',
+                                ]"
+                                @click.stop="selectDate(day)"
+                            >
+                                {{ day.day }}
+                            </div>
                         </div>
+                        <hr
+                            class="mx-2 w-full border-surface-100 dark:border-surface-800"
+                        />
+                        <!-- TimePicker Component -->
+                        <template v-if="withTime">
+                            <TimePicker
+                                class="my-2"
+                                v-model="selectedTime"
+                                :hours24="true"
+                            />
+                        </template>
+                    </div>
 
-                        <!-- Days Grid -->
+                    <!-- Months View -->
+                    <div
+                        class="grid grid-cols-3 gap-1 p-2"
+                        v-if="pickerView === 'months'"
+                    >
                         <div
-                            v-for="(day, ix) in daysInMonth"
-                            :key="'day-' + ix"
-                            class="cursor-default rounded p-1 text-center"
+                            v-for="ix in monthNames.map((_, index) => index)"
+                            :key="'month-' + ix"
+                            class="cursor-pointer rounded p-1 text-center"
                             :class="[
-                                day.currentMonth
-                                    ? 'cursor-pointer text-ink-950 hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50'
-                                    : 'text-ink-400 dark:text-ink-600',
-                                isSelectedDay(day)
+                                'hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50',
+                                selectedDate.getMonth() === ix
                                     ? 'bg-primary-500 !text-ink-50'
                                     : '',
                             ]"
-                            @click="selectDate(day)"
+                            @click.stop="changeDateMonth(ix)"
                         >
-                            {{ day.day }}
+                            {{ monthAbbreviations[ix] }}
                         </div>
                     </div>
-                    <hr
-                        class="mx-2 w-full border-surface-100 dark:border-surface-800"
-                    />
-                    <!-- TimePicker Component -->
-                    <template v-if="withTime">
-                        <TimePicker
-                            class="my-2"
-                            v-model="selectedTime"
-                            :hours24="true"
-                        />
-                    </template>
-                </div>
 
-                <!-- Months View -->
-                <div
-                    class="grid grid-cols-3 gap-1 p-2"
-                    v-if="pickerView === 'months'"
-                >
+                    <!-- Years View -->
                     <div
-                        v-for="ix in monthNames.map((_, index) => index)"
-                        :key="'month-' + ix"
-                        class="cursor-pointer rounded p-1 text-center"
-                        :class="[
-                            'hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50',
-                            selectedDate.getMonth() === ix
-                                ? 'bg-primary-500 !text-ink-50'
-                                : '',
-                        ]"
-                        @click.stop="changeDateMonth(ix)"
+                        class="grid grid-cols-3 gap-1 p-2"
+                        v-if="pickerView === 'years'"
                     >
-                        {{ monthAbbreviations[ix] }}
-                    </div>
-                </div>
-
-                <!-- Years View -->
-                <div
-                    class="grid grid-cols-3 gap-1 p-2"
-                    v-if="pickerView === 'years'"
-                >
-                    <div
-                        v-for="(year, ix) in getYearsArray()"
-                        :key="'year-' + ix"
-                        class="cursor-pointer rounded p-1 text-center"
-                        :class="[
-                            'hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50',
-                            selectedDate.getFullYear() === year
-                                ? 'bg-primary-500 !text-ink-50'
-                                : '',
-                        ]"
-                        @click.stop="changeDateYear(year)"
-                    >
-                        {{ year }}
+                        <div
+                            v-for="(year, ix) in getYearsArray()"
+                            :key="'year-' + ix"
+                            class="cursor-pointer rounded p-1 text-center"
+                            :class="[
+                                'hover:bg-primary-100 hover:!text-ink-950 dark:text-ink-50',
+                                selectedDate.getFullYear() === year
+                                    ? 'bg-primary-500 !text-ink-50'
+                                    : '',
+                            ]"
+                            @click.stop="changeDateYear(year)"
+                        >
+                            {{ year }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </teleport>
 
         <!-- Date Picker Button -->
         <button
