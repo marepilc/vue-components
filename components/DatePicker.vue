@@ -167,7 +167,22 @@ function positionPicker() {
 }
 
 function selectDate(day: { day: number; month: number; year: number }) {
-    selectedDate.value = new Date(day.year, day.month, day.day, 0, 0, 0, 0)
+    // Preserve the existing time components
+    const currentHours = selectedDate.value.getHours()
+    const currentMinutes = selectedDate.value.getMinutes()
+    const currentSeconds = selectedDate.value.getSeconds()
+    const currentMilliseconds = selectedDate.value.getMilliseconds()
+
+    // Create a new Date object with the preserved time components
+    selectedDate.value = new Date(
+        day.year,
+        day.month,
+        day.day,
+        currentHours,
+        currentMinutes,
+        currentSeconds,
+        currentMilliseconds
+    )
     pickerOpen.value = false
 }
 
